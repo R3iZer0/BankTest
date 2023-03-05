@@ -15,8 +15,8 @@
     </header>
 
     <main>
-        {% block content %}
-        {% endblock %}
+        {% csrf_token %}
+        {{ form.as_p }}
     </main>
     <form method="post" action="{% url 'logout' %}">
         {% csrf_token %}

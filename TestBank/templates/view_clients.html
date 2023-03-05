@@ -22,6 +22,7 @@
         <td>{{ client.phone_number }}</td>
         <td>{% if client.active %}Yes{% else %}No{% endif %}</td>
         <td>{{ client.amount }}</td>
+        <td>{{client.gender}}</td>
       </tr>
     {% endfor %}
   </tbody>

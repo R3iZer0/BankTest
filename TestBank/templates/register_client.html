@@ -5,6 +5,9 @@
   <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
+    <div class="form-group">
+      <label for="{{ form.gender.id_for_label }}"></label>
+    </div>
     <button type="submit">Register</button>
   </form>
 {% endblock %}

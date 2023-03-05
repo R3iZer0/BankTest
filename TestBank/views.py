@@ -12,18 +12,20 @@ def home(request):
 
 
 @login_required
+
 def register_client(request):
     if request.method == 'POST':
         form = ClientForm(request.POST)
         if form.is_valid():
-            form.save()
-            form = ClientForm()  # create a new instance of the form
-            return render(request, 'register_client.html', {'form': form, 'success_message': 'Client registered successfully.'})
+            client = form.save(commit=False)
+            client.active = True
+            client.save()
+            return redirect('view_clients')
     else:
         form = ClientForm()
-    return render(request, 'register_client.html', {'form': form})
 
-
+    context = {'form': form}
+    return render(request, 'register_client.html', context)
 
 @login_required
 
