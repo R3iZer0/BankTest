@@ -20,7 +20,7 @@ def register_client(request):
             client = form.save(commit=False)
             client.active = True
             client.save()
-            return redirect('view_clients')
+            return redirect('view_clients')#or add register_client.html to clear the form 
     else:
         form = ClientForm()
 
@@ -48,10 +48,16 @@ def user_login(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             auth_login(request, user)
-            return redirect('register_client')
+            return redirect('dashboard')
         else:
             return render(request, 'login.html', {'error_message': 'Invalid login'})
     return render(request, 'login.html')
 
 def home(request):
     return render(request, 'view_clients.html')
+
+
+
+
+def dashboard(request):
+    return render(request, 'dashboard.html')

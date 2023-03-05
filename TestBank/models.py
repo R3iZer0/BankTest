@@ -12,7 +12,7 @@ class Client(models.Model):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     email = models.EmailField()
-    number = models.CharField(max_length=15)
+    number = models.CharField(max_length=50)
     active = models.BooleanField(default=False)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES,default='N')
