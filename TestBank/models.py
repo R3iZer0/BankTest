@@ -20,6 +20,7 @@ class Client(models.Model):
     city = models.CharField(max_length=50,default=' ')
     state = models.CharField(max_length=50,default=' ')
     zip_code = models.CharField(max_length=10,default=' ')
+    password = models.CharField(max_length=50,default=' ')
 
     
     

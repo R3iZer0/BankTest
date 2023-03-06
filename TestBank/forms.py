@@ -19,4 +19,4 @@ class ClientForm(forms.ModelForm):
     }
     class Meta:
         model = Client
-        fields = ['first_name', 'last_name', 'email', 'number', 'amount','active','gender','adress','city','state','zip_code']
+        fields = ['first_name', 'last_name', 'email', 'number', 'amount','active','gender','adress','city','state','zip_code','password']
