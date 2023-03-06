@@ -11,6 +11,12 @@
       <th>Phone Number</th>
       <th>Active</th>
       <th>Amount</th>
+      <th>Gender</th>
+      <th>Adress</th>
+      <th>City</th>
+      <th>State</th>
+      <th>Zip Code</th>
+
     </tr>
   </thead>
   <tbody>
@@ -28,8 +34,8 @@
         <td>{{client.state}}</td>
 
         <td>{{client.zip_code}}</td>
-
-
+         <td><a href="{% url 'edit_client' client.pk %}">Edit</a></td>
+         <td><a href="{% url 'delete_client' client.id %}">Delete</a></td>
       </tr>
     {% endfor %}
   </tbody>
