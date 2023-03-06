@@ -12,18 +12,20 @@ def home(request):
 
 
 @login_required
+
 def register_client(request):
     if request.method == 'POST':
         form = ClientForm(request.POST)
         if form.is_valid():
-            form.save()
-            form = ClientForm()  # create a new instance of the form
-            return render(request, 'register_client.html', {'form': form, 'success_message': 'Client registered successfully.'})
+            client = form.save(commit=False)
+            client.active = True
+            client.save()
+            return redirect('view_clients')#or add register_client.html to clear the form 
     else:
         form = ClientForm()
-    return render(request, 'register_client.html', {'form': form})
 
-
+    context = {'form': form}
+    return render(request, 'register_client.html', context)
 
 @login_required
 
@@ -46,10 +48,16 @@ def user_login(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             auth_login(request, user)
-            return redirect('register_client')
+            return redirect('dashboard')
         else:
             return render(request, 'login.html', {'error_message': 'Invalid login'})
     return render(request, 'login.html')
 
 def home(request):
     return render(request, 'view_clients.html')
+
+
+
+
+def dashboard(request):
+    return render(request, 'dashboard.html')
