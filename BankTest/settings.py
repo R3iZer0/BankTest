@@ -78,10 +78,15 @@ WSGI_APPLICATION = 'BankTest.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'Banka2023',
+        'USER': 'banka',
+        'PASSWORD': 'banka2023',
+        'HOST': 'database-2.csudyesmlyjw.eu-central-1.rds.amazonaws.com',
+        'PORT': '54324'
     }
 }
+
 
 
 # Password validation
