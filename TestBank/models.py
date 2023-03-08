@@ -9,10 +9,10 @@ GENDER_CHOICES = [
 ]
 
 class Client(models.Model):
-    first_name = models.CharField(max_length=50,null=True)
-    last_name = models.CharField(max_length=50,null=True)
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
     email = models.EmailField()
-    number = models.FloatField(max_length=50,null=True)
+    number = models.CharField(max_length=50)
     active = models.BooleanField(default=False)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES,default='N')
@@ -26,4 +26,4 @@ class Client(models.Model):
     
     
     def __str__(self):
-        return self.first_name
+        return self.name

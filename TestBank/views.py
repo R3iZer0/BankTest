@@ -1,5 +1,5 @@
 from django.views.generic import ListView
-from django.shortcuts import render,redirect      
+from django.shortcuts import render,redirect,get_object_or_404
 from .forms import ClientForm
 from .models import Client
 from django.contrib.auth import authenticate, login as auth_login,logout
@@ -61,3 +61,24 @@ def home(request):
 
 def dashboard(request):
     return render(request, 'dashboard.html')
+
+
+
+
+
+
+def edit_client(request, pk):
+    client = get_object_or_404(Client, pk=pk)
+    if request.method == 'POST':
+        form = ClientForm(request.POST, instance=client)
+        if form.is_valid():
+            form.save()
+    else:
+        form = ClientForm(instance=client)
+    return render(request, 'edit_client.html', {'form': form, 'client': client})
+
+
+def delete_client(request, client_id):
+    client = get_object_or_404(Client, pk=client_id)
+    client.delete()
+    return redirect('view_clients')
