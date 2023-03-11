@@ -1,0 +1,19 @@
+
+
+{% block content %}
+<h1>Welcome, {{ user.username }}!</h1>
+<p>Here is your information:</p>
+<ul>
+  <li>First name: {{ user.first_name }}</li>
+  <li>Last name: {{ user.last_name }}</li>
+  <li>Email: {{ user.email }}</li>
+  <li>Number: {{ user.number }}</li>
+  <li>Amount: {{ user.amount }}</li>
+  <li>Active: {{ user.active }}</li>
+  <li>Gender: {{ user.gender }}</li>
+  <li>Address: {{ user.address }}</li>
+  <li>City: {{ user.city }}</li>
+  <li>State: {{ user.state }}</li>
+  <li>Zip code: {{ user.zip_code }}</li>
+</ul>
+{% endblock %}
