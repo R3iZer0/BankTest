@@ -116,9 +116,35 @@ def set_user_permissions(sender, instance, created, **kwargs):
 
 
 
-def dashboard_view_only(request):
+@login_required
+def client_dashboard(request):
     user = request.user
-    # Query the user's data and render the template
-    return render(request, 'dashboard_view_only.html', {'user': user})
+    context = {
+        'username': user.username,
+        'first_name': user.first_name,
+        'last_name': user.last_name,
+        'email': user.email,
+        # add more fields here
+    }
+    return render(request, 'client_dashboard.html', context)
 
+def client_login(request):
+    if request.method == 'POST':
+        # Get the username and password from the request
+        username = request.POST.get('username')
+        password = request.POST.get('password')
 
+        # Authenticate the user against the client authentication system
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            # Log in the user and redirect to the home page
+            login(request, user)
+            return redirect('client_dashboard')
+        else:
+            # Return an error message if authentication fails
+            error_message = "Invalid username or password"
+            return render(request, 'client_login.html', {'error_message': error_message})
+
+    # Render the client login page for GET requests
+    return render(request, 'client_login.html')

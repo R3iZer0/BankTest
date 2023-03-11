@@ -1,19 +1,19 @@
-
+{% extends 'base.html' %}
 
 {% block content %}
-<h1>Welcome, {{ user.username }}!</h1>
-<p>Here is your information:</p>
+<h1>Client Dashboard</h1>
 <ul>
-  <li>First name: {{ user.first_name }}</li>
-  <li>Last name: {{ user.last_name }}</li>
-  <li>Email: {{ user.email }}</li>
-  <li>Number: {{ user.number }}</li>
-  <li>Amount: {{ user.amount }}</li>
-  <li>Active: {{ user.active }}</li>
-  <li>Gender: {{ user.gender }}</li>
-  <li>Address: {{ user.address }}</li>
-  <li>City: {{ user.city }}</li>
-  <li>State: {{ user.state }}</li>
-  <li>Zip code: {{ user.zip_code }}</li>
+    <li>Username: {{ User.username }}</li>
+    <li>First Name: {{ first_name }}</li>
+    <li>Last Name: {{ last_name }}</li>
+    <li>Email: {{ email }}</li>
+    <li>Phone Number: {{ number }}</li>
+    <li>Account Balance: {{ amount }}</li>
+    <li>Account Status: {{ active }}</li>
+    <li>Gender: {{ gender }}</li>
+    <li>Address: {{ address }}</li>
+    <li>City: {{ city }}</li>
+    <li>State: {{ client.state }}</li>
+    <li>ZIP Code: {{ zip_code }}</li>
 </ul>
 {% endblock %}
