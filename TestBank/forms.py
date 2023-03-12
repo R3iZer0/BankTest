@@ -1,8 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Client, UserAddress
-from .constants import GENDER_CHOICE
+
 
 GENDER_CHOICES = (
     ('M', 'Male'),
@@ -10,35 +9,19 @@ GENDER_CHOICES = (
     ('N', 'Not Selected')
 )
 
-class UserAddressForm(forms.ModelForm):
-
-    class Meta:
-        model = UserAddress
-        fields = [
-            'street_address',
-            'city',
-            'postal_code',
-            'country']
-
 class CustomUserCreationForm(UserCreationForm):
     first_name = forms.CharField(max_length=30)
     last_name = forms.CharField(max_length=30)
     email = forms.EmailField()
-
-class UserRegistrationForm(UserCreationForm):
-    gender = forms.ChoiceField(choices=GENDER_CHOICE)
-    birth_date = forms.DateField(widget=forms.DateInput(attrs={'type':'date'}))
-    first_name = forms.CharField(widget=forms.TextInput(attrs={'autofocus':'on'}))
-    email = forms.CharField(widget=forms.EmailInput(attrs={'autofocus':'off'}))
+    number = forms.CharField(max_length=15)
+    amount = forms.DecimalField(decimal_places=2, max_digits=10)
+    active = forms.BooleanField(required=False)
+    gender = forms.ChoiceField(choices=[('M', 'Male'), ('F', 'Female'), ('O', 'Other')])
+    address = forms.CharField(max_length=100)
+    city = forms.CharField(max_length=50)
+    state = forms.CharField(max_length=50)
+    zip_code = forms.CharField(max_length=10)
 
     class Meta:
         model = User
-        fields = [
-            'first_name',
-            'last_name',
-            'email',
-            'password1',
-            'password2',
-        ]
-
-
+        fields = ('username', 'first_name', 'last_name', 'email', 'number', 'amount', 'active', 'gender', 'address', 'city', 'state', 'zip_code', 'password1', 'password2')
