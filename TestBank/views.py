@@ -1,8 +1,10 @@
+from django.http import HttpResponseRedirect
+from django.urls import reverse_lazy
 from django.views.generic import ListView
 from django.shortcuts import render,redirect,get_object_or_404
-
+from django.views.generic import TemplateView, RedirectView
 from TestBank.forms import CustomUserCreationForm
-from .forms import CustomUserCreationForm
+from .forms import  UserAddressForm, UserRegistrationForm
 
 from .models import Client
 from django.contrib.auth import authenticate, login as auth_login,logout
@@ -13,33 +15,59 @@ from django.contrib.auth.decorators import login_required,user_passes_test
 from django.contrib.auth.models import User, Group
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django import forms
+
+
+
 
 
 
 @login_required
-def home(request):
-    return redirect('register_client')
+
+class UserRegistrationView(TemplateView):
+    model = User
+    form_class = UserRegistrationForm
+    template_name = 'register_client.html'
+    
+    def dispatch(self, request, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            return HttpResponseRedirect(
+                reverse_lazy('transactions:transaction_report')
+            )
+        return super().dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        registration_form = UserRegistrationForm(self.request.POST)
+        address_form = UserAddressForm(self.request.POST)
+
+        if registration_form.is_valid() and address_form.is_valid():
+            user = registration_form.save()
+            address = address_form.save(commit=False)
+            address.user = user
+            address.save()
 
 
-@login_required
+            client_group, created = Group.objects.get_or_create(name='Client')
+            user.groups.add(client_group)
 
-def register_client(request):
-    if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=password)
-            groups = Group.objects.get(name='Client')
-            user.groups.add(groups)
 
-            login(request, user)
-            return redirect('register_client')
-    else:
-        form = CustomUserCreationForm()
-    return render(request, 'register_client.html', {'form': form})
+            login(self.request, user)
+            messages.success(
+                self.request,
+                (
+                    f'Thank You For Creating A Bank Account. '
+                    f'Your Account Number is {user.account.account_no}. '
+                )
+            )
+            return HttpResponseRedirect(
+                reverse_lazy('transactions:deposit_money')
+            )
+
+        return self.render_to_response(
+            self.get_context_data(
+                registration_form=registration_form,
+                address_form=address_form
+            )
+        )
 
 
 group_name = 'Client'
@@ -49,9 +77,6 @@ new_group, created = Group.objects.get_or_create(name=group_name)
 
 @login_required
 
-def view_clients(request):
-    clients = Client.objects.all()
-    return render(request, 'view_clients.html', {'clients': clients})
 
 
 ##create new user
@@ -148,3 +173,11 @@ def client_login(request):
 
     # Render the client login page for GET requests
     return render(request, 'client_login.html')
+
+
+def view_clients(request):
+    clients = Group.objects.get(name='Client').user_set.all()
+    context = {
+        'clients': clients,
+    }
+    return render(request, 'view_clients.html', context)
