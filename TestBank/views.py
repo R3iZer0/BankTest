@@ -2,7 +2,7 @@ from django.views.generic import ListView
 from django.shortcuts import render,redirect,get_object_or_404
 
 from TestBank.forms import CustomUserCreationForm
-from .forms import CustomUserCreationForm
+from .forms import CustomUserCreationForm, UserAddressForm, UserRegistrationForm
 
 from .models import Client
 from django.contrib.auth import authenticate, login as auth_login,logout
@@ -13,7 +13,7 @@ from django.contrib.auth.decorators import login_required,user_passes_test
 from django.contrib.auth.models import User, Group
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django import forms
+from .models import Client, UserAddress
 
 
 
@@ -26,21 +26,24 @@ def home(request):
 
 def register_client(request):
     if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=password)
-            groups = Group.objects.get(name='Client')
-            user.groups.add(groups)
-
-            login(request, user)
-            return redirect('register_client')
+        user_form = UserRegistrationForm(request.POST)
+        address_form = UserAddressForm(request.POST)
+        if user_form.is_valid() and address_form.is_valid():
+            user = user_form.save(commit=False)
+            user.email = user_form.cleaned_data['email']
+            user.save()
+            address = address_form.save(commit=False)
+            address.user = user
+            address.save()
+            messages.success(request, 'Account created successfully')
+            return redirect('home')
     else:
-        form = CustomUserCreationForm()
-    return render(request, 'register_client.html', {'form': form})
-
+        user_form = UserRegistrationForm()
+        address_form = UserAddressForm()
+    return render(request, 'register_client.html', {
+        'user_form': user_form,
+        'address_form': address_form
+    })
 
 group_name = 'Client'
 new_group, created = Group.objects.get_or_create(name=group_name)
@@ -118,13 +121,13 @@ def set_user_permissions(sender, instance, created, **kwargs):
 
 @login_required
 def client_dashboard(request):
-    user = request.user
+    try:
+        client = Client.objects.get(user=request.user)
+    except Client.DoesNotExist:
+        client = None
+
     context = {
-        'username': user.username,
-        'first_name': user.first_name,
-        'last_name': user.last_name,
-        'email': user.email,
-        # add more fields here
+        'client': client
     }
     return render(request, 'client_dashboard.html', context)
 
