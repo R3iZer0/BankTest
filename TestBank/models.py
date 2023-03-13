@@ -15,5 +15,7 @@ class Client(models.Model):
     city = models.CharField(max_length=50)
     state = models.CharField(max_length=50)
     zip_code = models.CharField(max_length=10)
-
+    active = models.BooleanField(default=True)
+    class Meta:
+        db_table = 'testbank_client'
 
