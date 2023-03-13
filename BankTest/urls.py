@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path,include
 from django.contrib.auth.views import LoginView, LogoutView
 
-from TestBank.views import client_login, UserRegistrationView,home,view_clients,user_login,dashboard,edit_client,delete_client,client_dashboard
+from TestBank.views import client_login, client_register,home,view_clients,user_login,dashboard,edit_client,delete_client,client_dashboard
 
 
 
@@ -26,7 +26,7 @@ urlpatterns = [
     path('', LoginView.as_view(template_name='login.html'), name='login'),
     path('home/', home, name='home'),
     path('dashboard/',dashboard, name='dashboard'),  # new URL pattern
-    path('register_client/', UserRegistrationView, name='register_client'),
+    path('register_client/', client_register, name='register_client'),
     path('view_clients/', view_clients, name='view_clients'),
     path('edit_client/<int:pk>/', edit_client, name='edit_client'),
     path('delete_client/<int:client_id>/',delete_client, name='delete_client'),

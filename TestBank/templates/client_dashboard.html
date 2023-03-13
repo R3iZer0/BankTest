@@ -1,19 +1,13 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Client Dashboard</h1>
-<ul>
-    <li>Username: {{ User.username }}</li>
-    <li>First Name: {{ first_name }}</li>
-    <li>Last Name: {{ last_name }}</li>
-    <li>Email: {{ email }}</li>
-    <li>Phone Number: {{ number }}</li>
-    <li>Account Balance: {{ amount }}</li>
-    <li>Account Status: {{ active }}</li>
-    <li>Gender: {{ gender }}</li>
-    <li>Address: {{ address }}</li>
-    <li>City: {{ city }}</li>
-    <li>State: {{ client.state }}</li>
-    <li>ZIP Code: {{ zip_code }}</li>
-</ul>
+  <h2>Welcome, {{ user.username }}!</h2>
+  <ul>
+    <li><strong>Name:</strong> {{ user.get_full_name }}</li>
+    <li><strong>Email:</strong> {{ user.email }}</li>
+    <li><strong>Address:</strong> {{ user.client.address }}</li>
+    <li><strong>City:</strong> {{ user.client.city }}</li>
+    <li><strong>State:</strong> {{ user.client.state }}</li>
+    <li><strong>Zip Code:</strong> {{ user.client.zip_code }}</li>
+  </ul>
 {% endblock %}
