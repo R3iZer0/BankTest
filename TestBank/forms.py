@@ -2,7 +2,6 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User,Group
 from .models import Client
-from .constants import GENDER_CHOICE
 
 GENDER_CHOICES = (
     ('M', 'Male'),
