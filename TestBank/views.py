@@ -13,12 +13,8 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 
-
-
-
-
-@login_required
-
+#@login_required
+#@user_passes_test(lambda u: u.groups.filter(name='Account Manager').exists(), login_url='home')
 def client_register(request):
     if request.method == 'POST':
         form = ClientRegistrationForm(request.POST)
@@ -32,16 +28,6 @@ def client_register(request):
 
 
 @login_required
-
-
-
-##create new user
-#from django.contrib.auth.models import User
-#>>> User.objects.create_user('test', 'test@test.com', '1234')
-
-
-
-
 def user_login(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -63,6 +49,8 @@ def home(request):
 
 
 
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name='Account Manager').exists(), login_url='home')
 
 def dashboard(request):
     return render(request, 'dashboard.html')
@@ -87,6 +75,16 @@ def delete_client(request, client_id):
     client = get_object_or_404(Client, pk=client_id)
     client.delete()
     return redirect('view_clients')
+
+def view_clients(request):
+    clients = Group.objects.get(name='Client').user_set.all()
+    context = {
+        'clients': clients,
+    }
+    return render(request, 'view_clients.html', context)
+
+
+
 
 
 @receiver(post_save, sender=User)
@@ -123,10 +121,3 @@ def client_login(request):
     # Render the client login page for GET requests
     return render(request, 'client_login.html')
 
-
-def view_clients(request):
-    clients = Group.objects.get(name='Client').user_set.all()
-    context = {
-        'clients': clients,
-    }
-    return render(request, 'view_clients.html', context)
