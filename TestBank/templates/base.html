@@ -8,8 +8,8 @@
         <h1>Banking System</h1>
         <nav>
             <ul>
-                <li><a href="{% url 'register_client' %}">Register Client</a></li>
-                <li><a href="{% url 'view_clients' %}">View Client</a></li>
+                <li><a href="{% url 'register_client' %}">Register New Client</a></li>
+                <li><a href="{% url 'view_clients' %}">Clients List</a></li>
                 <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
             </ul>
         </nav>
@@ -19,8 +19,9 @@
         {% block content %}
         {% endblock %}
     </main>
-    <form method="post" action="{% url 'logout' %}">
-       <button type="submit">Logout</button>
+    <form method="POST" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Logout</button>
       </form>
       
 </body>

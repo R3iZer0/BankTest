@@ -19,11 +19,12 @@ class ClientRegistrationForm(UserCreationForm):
     state = forms.CharField(max_length=50)
     zip_code = forms.CharField(max_length=10)
     active=forms.BooleanField()
+    account_balance = forms.DecimalField(max_digits=10)
 
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password1', 'password2', 'first_name', 'last_name','active', 'address', 'city', 'state', 'zip_code']
+        fields = ['username', 'email', 'password1', 'password2', 'first_name', 'last_name','active','account_balance' ,'address', 'city', 'state', 'zip_code']
 
     def save(self, commit=True):
         user = super(ClientRegistrationForm, self).save(commit=False)

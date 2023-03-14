@@ -1,7 +1,7 @@
 
 from django.urls import path
 from django.contrib.auth.views import LoginView, LogoutView
-from .views import client_login, home, register_client, view_clients,user_login,dashboard,edit_client,delete_client,client_dashboard
+from .views import client_login, home,client_logout, register_client, view_clients,user_login,dashboard,edit_client,delete_client,client_dashboard
 
 
 urlpatterns = [
@@ -13,7 +13,9 @@ urlpatterns = [
     path('edit_client/<int:pk>/', edit_client, name='edit_client'),
     path('delete_client/<int:client_id>/',delete_client, name='delete_client'),
     path('logout/', LogoutView.as_view(next_page='login'), name='logout'),
+
     path('client_login/',client_login, name='client_login'),
     path('client_dashboard/', client_dashboard, name='client_dashboard'),
+    path('logout/', client_logout(next_page='login'), name='logout'),
 
 ]

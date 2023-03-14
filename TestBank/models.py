@@ -16,5 +16,5 @@ class Client(models.Model):
     state = models.CharField(max_length=50)
     zip_code = models.CharField(max_length=10)
     active=models.BooleanField(default=True)
-
+    account_balance = models.DecimalField(max_digits=10, decimal_places=3)
 

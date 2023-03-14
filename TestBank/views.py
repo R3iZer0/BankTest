@@ -14,7 +14,7 @@ from django.dispatch import receiver
 
 
 #@login_required
-#@user_passes_test(lambda u: u.groups.filter(name='Account Manager').exists(), login_url='home')
+@user_passes_test(lambda u: u.groups.filter(name='Account Manager').exists(), login_url='home')
 def client_register(request):
     if request.method == 'POST':
         form = ClientRegistrationForm(request.POST)
@@ -28,24 +28,25 @@ def client_register(request):
 
 
 @login_required
+
 def user_login(request):
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
+        username = request.POST.get('username')
+        password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
         if user is not None:
-            auth_login(request, user)
-            return redirect('dashboard')
+            login(request, user)
+            return redirect('dashboard')  # Redirect to the admin dashboard
         else:
-            return render(request, 'login.html', {'error_message': 'Invalid login'})
+            error_message = "Invalid username or password"
+            return render(request, 'login.html', {'error_message': error_message})
     return render(request, 'login.html')
 
 
 
 
-
 def home(request):
-    return render(request, 'view_clients.html')
+    return render(request, 'dashboard.html')
 
 
 
@@ -58,33 +59,42 @@ def dashboard(request):
 
 
 
-
-
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name='Account Manager').exists(), login_url='home')
 def edit_client(request, pk):
     client = get_object_or_404(Client, pk=pk)
     if request.method == 'POST':
-        form = form(request.POST, instance=client)
+        form = ClientRegistrationForm(request.POST, instance=client)
         if form.is_valid():
-            form.save()
+            user = form.save()
+            return redirect('edit_client')
     else:
-        form = form(instance=client)
+        form = ClientRegistrationForm(instance=client)
     return render(request, 'edit_client.html', {'form': form, 'client': client})
 
 
-def delete_client(request, client_id):
-    client = get_object_or_404(Client, pk=client_id)
-    client.delete()
-    return redirect('view_clients')
 
+
+@user_passes_test(lambda u: u.groups.filter(name='Account Manager').exists(), login_url='home')
+def delete_client(request, pk):
+    client = get_object_or_404(Client, pk=pk)
+    if request.method == 'POST':
+        client.delete()
+        return redirect('view_clients')
+    return render(request, 'delete_client.html', {'client': client})
+
+
+
+
+@user_passes_test(lambda u: u.groups.filter(name='Account Manager').exists(), login_url='home')
 def view_clients(request):
-    clients = Group.objects.get(name='Client').user_set.all()
+    group = Group.objects.get(name='Client')
+    clients = group.user_set.all()
+
     context = {
         'clients': clients,
     }
     return render(request, 'view_clients.html', context)
-
-
-
 
 
 @receiver(post_save, sender=User)
@@ -92,6 +102,10 @@ def set_user_permissions(sender, instance, created, **kwargs):
     if created:
         group = Group.objects.get(name='Client')
         instance.groups.add(group)
+
+
+
+
 
 
 
@@ -121,3 +135,12 @@ def client_login(request):
     # Render the client login page for GET requests
     return render(request, 'client_login.html')
 
+
+
+def user_logout(request):
+    logout(request)
+    return redirect('login')
+
+def client_logout(request):
+    logout(request)
+    return redirect('client_login')
