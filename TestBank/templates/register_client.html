@@ -1,11 +1,13 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Register</h2>
-<form method="post">
-  {% csrf_token %}
-  {{ user_form.as_p }}
-  {{ address_form.as_p }}
-  <button type="submit">Register</button>
-</form>
+  <h1>Register a new client</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div class="form-group">
+      <label for="{{ form.gender.id_for_label }}"></label>
+    </div>
+    <button type="submit">Register</button>
+  </form>
 {% endblock %}

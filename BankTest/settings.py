@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import os
 from pathlib import Path
 
+
+LOGIN_URL = '/login/'
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -79,16 +82,10 @@ WSGI_APPLICATION = 'BankTest.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'Banka2023',
-        'USER': 'banka',
-        'PASSWORD': 'banka2023',
-        'HOST': 'database-2.csudyesmlyjw.eu-central-1.rds.amazonaws.com',
-        'PORT': '54324'
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'mydatabase1',
     }
 }
-
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators

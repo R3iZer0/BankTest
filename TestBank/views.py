@@ -1,69 +1,33 @@
-from django.views.generic import ListView
-from django.shortcuts import render,redirect,get_object_or_404
 
-from TestBank.forms import CustomUserCreationForm
-from .forms import CustomUserCreationForm, UserAddressForm, UserRegistrationForm
+from django.shortcuts import render,redirect,get_object_or_404
+from .forms import  ClientRegistrationForm
+
 
 from .models import Client
 from django.contrib.auth import authenticate, login as auth_login,logout
 from django.contrib.auth.forms import UserCreationForm,AuthenticationForm
-from django.contrib import messages
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required,user_passes_test
 from django.contrib.auth.models import User, Group
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from .models import Client, UserAddress
 
 
-
-@login_required
-def home(request):
-    return redirect('register_client')
-
-
-@login_required
-
-def register_client(request):
+#@login_required
+#@user_passes_test(lambda u: u.groups.filter(name='Account Manager').exists(), login_url='home')
+def client_register(request):
     if request.method == 'POST':
-        user_form = UserRegistrationForm(request.POST)
-        address_form = UserAddressForm(request.POST)
-        if user_form.is_valid() and address_form.is_valid():
-            user = user_form.save(commit=False)
-            user.email = user_form.cleaned_data['email']
-            user.save()
-            address = address_form.save(commit=False)
-            address.user = user
-            address.save()
-            messages.success(request, 'Account created successfully')
+        form = ClientRegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
             return redirect('home')
     else:
-        user_form = UserRegistrationForm()
-        address_form = UserAddressForm()
-    return render(request, 'register_client.html', {
-        'user_form': user_form,
-        'address_form': address_form
-    })
-
-group_name = 'Client'
-new_group, created = Group.objects.get_or_create(name=group_name)
-
+        form = ClientRegistrationForm()
+    return render(request, 'register_client.html', {'form': form})
 
 
 @login_required
-
-def view_clients(request):
-    clients = Client.objects.all()
-    return render(request, 'view_clients.html', {'clients': clients})
-
-
-##create new user
-#from django.contrib.auth.models import User
-#>>> User.objects.create_user('test', 'test@test.com', '1234')
-
-
-
-
 def user_login(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -85,6 +49,8 @@ def home(request):
 
 
 
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name='Account Manager').exists(), login_url='home')
 
 def dashboard(request):
     return render(request, 'dashboard.html')
@@ -110,6 +76,16 @@ def delete_client(request, client_id):
     client.delete()
     return redirect('view_clients')
 
+def view_clients(request):
+    clients = Group.objects.get(name='Client').user_set.all()
+    context = {
+        'clients': clients,
+    }
+    return render(request, 'view_clients.html', context)
+
+
+
+
 
 @receiver(post_save, sender=User)
 def set_user_permissions(sender, instance, created, **kwargs):
@@ -121,15 +97,8 @@ def set_user_permissions(sender, instance, created, **kwargs):
 
 @login_required
 def client_dashboard(request):
-    try:
-        client = Client.objects.get(user=request.user)
-    except Client.DoesNotExist:
-        client = None
-
-    context = {
-        'client': client
-    }
-    return render(request, 'client_dashboard.html', context)
+    user = request.user
+    return render(request, 'client_dashboard.html', {'user': user})
 
 def client_login(request):
     if request.method == 'POST':
@@ -151,3 +120,4 @@ def client_login(request):
 
     # Render the client login page for GET requests
     return render(request, 'client_login.html')
+
